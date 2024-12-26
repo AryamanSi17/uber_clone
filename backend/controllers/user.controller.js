@@ -21,7 +21,7 @@ module.exports.registerUser = async (req, res) => {
 }
 
 module.exports.loginUser = async (req, res) => {
-    const errors = validateResult(req);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -34,6 +34,8 @@ module.exports.loginUser = async (req, res) => {
     if (!isMatch) {
         return res.status(401).json({ errors: [{ msg: 'Invalid credentials' }] });
     }
+    const token = user.generateAuthToken();
+    res.cookie('token',token);
     res.status(200).json({ token, user });
 }
 module.exports.getUserProfile = async (req, res) => {
