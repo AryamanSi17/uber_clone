@@ -6,7 +6,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useEffect, useContext } from 'react'
 import axios from 'axios'
-import ConfirmRidePanel from '../components/ConfirmRidePanel'
+import ConfirmRidePanel from '../components/ConfirmRide'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 const CaptainHome = () => {
    

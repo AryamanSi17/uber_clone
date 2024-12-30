@@ -1,26 +1,34 @@
-import React from 'react'
+import React from 'react';
 
-const LocationSearchPanel = (props) => {
-  const locations=["Chhotey Quazipur Khurd","123 Main St, Springfield",
-    "456 Elm St, Metropolis",
-    "789 Oak St, Gotham"]
-  return (
-    <div>
-        {
-          locations.map((location,index)=>(
-            <div onClick={()=>{
-              props.setVehiclePanelOpen(true)
-              props.setpanelOpen(false)
-            }}
-            key={index} className='flex gap-2 border-2 p-2 border-white active:border-black items-center justify-start my-2'>
-              <h2 className='bg-[#eee] h-10 flex items-center justify-center w-10 rounded-full'><i className="ri-map-pin-line"></i></h2>
-              <h4 className='font-medium'>{location}</h4>
-            </div>
-          ))
+const LocationSearchPanel = ({ suggestions, setVehiclePanel, setPanelOpen, setPickup, setDestination, activeField }) => {
+    const handleSuggestionClick = (suggestion) => {
+        if (activeField === 'pickup') {
+            setPickup(suggestion.description);
+        } else if (activeField === 'destination') {
+            setDestination(suggestion.description);
         }
-       
-    </div>
-  )
-}
+        // setVehiclePanel(true)
+        // setPanelOpen(false)
+    };
 
-export default LocationSearchPanel
+    return (
+        <div>
+            {/* Display fetched suggestions */}
+            {suggestions.map((elem, idx) => (
+                <div
+                    key={idx}
+                    onClick={() => handleSuggestionClick(elem)}
+                    className="flex gap-4 border-2 p-3 border-gray-50 active:border-black rounded-xl items-center my-2 justify-start"
+                >
+                    <h2 className="bg-[#eee] h-8 flex items-center justify-center w-12 rounded-full">
+                        <i className="ri-map-pin-fill"></i>
+                    </h2>
+                    {/* Access the specific property of the object to display */}
+                    <h4 className="font-medium">{elem.description}</h4>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default LocationSearchPanel;
