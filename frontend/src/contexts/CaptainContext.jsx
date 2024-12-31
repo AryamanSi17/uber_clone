@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState ,useEffect} from 'react';
 
 export const CaptainDataContext = createContext();
 
@@ -10,7 +10,10 @@ const CaptainContext = ({ children }) => {
             lastName: ''
         }
     });
-
+    useEffect(() => {
+        console.log("Captain in context:", captain);
+    }, [captain]);
+    
     return (
         <CaptainDataContext.Provider value={{ captain, setCaptain }}>
             {children}
