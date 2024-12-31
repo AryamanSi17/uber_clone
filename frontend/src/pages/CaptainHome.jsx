@@ -8,6 +8,8 @@ import { useEffect, useContext } from 'react'
 import axios from 'axios'
 import ConfirmRidePanel from '../components/ConfirmRide'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
+import { CaptainDataContext } from '../contexts/CaptainContext'
+import { SocketContext } from '../contexts/SocketContext'
 const CaptainHome = () => {
    
     const [ ridePopupPanel, setRidePopupPanel ] = useState(true)
@@ -17,6 +19,31 @@ const CaptainHome = () => {
     const confirmRidePopupPanelRef = useRef(null)
     const [ ride, setRide ] = useState(null)
     const [ confirmRide, setConfirmRide ] = useState(null)
+    const { captain } = useContext(CaptainDataContext)
+    const { socket } = useContext(SocketContext)
+
+    useEffect(() => {
+        socket.emit('join', { userType: 'captain', userId: captain._id })
+        const updateLocation = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+
+                    socket.emit('update-location-captain', {
+                        userId: captain._id,
+                        location: {
+                            ltd: position.coords.latitude,
+                            lng: position.coords.longitude
+                        }
+                    })
+                })
+            }
+        }
+
+       // const locationInterval = setInterval(updateLocation, 10000)
+        updateLocation()
+
+    }, [])
+
 
     useGSAP(function () {
       if (ridePopupPanel) {

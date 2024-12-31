@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState,useEffect,useContext } from 'react'
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import 'remixicon/fonts/remixicon.css'
@@ -7,7 +7,10 @@ import VehiclePanel from '../components/VehiclePanel';
 import ConfirmRide from '../components/ConfirmRide';
 import LookingForDriver from '../components/LookingForDriver';
 import WaitingForDriver from '../components/WaitingForDriver';
+import {SocketContext} from '../contexts/SocketContext';
 import axios from 'axios';
+import { UserDataContext } from '../contexts/UserContext';
+import { Socket } from 'socket.io-client';
 const Home = () => {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
@@ -29,6 +32,12 @@ const Home = () => {
   const [vehicleType, setVehicleType] = useState(null)
   const [ride, setRide] = useState(null)
   const [pickupSuggestions, setPickupSuggestions] = useState([])
+ 
+  const{socket}=useContext(SocketContext)
+  const {user}=useContext(UserDataContext)
+  useEffect(() => {
+    socket.emit("join", { userType: "user", userId: user._id })
+}, [ user ])
 
   const handlePickupChange = async (e) => {
     setPickup(e.target.value)
@@ -61,14 +70,11 @@ const handleDestinationChange = async (e) => {
     }
 }
 
-
-
-
   const submitHandler = (e) => {
     e.preventDefault()
     console.log('submitted')
   }
-
+  
   useGSAP(function () {
     if (panelOpen) {
       gsap.to(panelRef.current, {
@@ -171,13 +177,10 @@ const handleDestinationChange = async (e) => {
 
   }
 
-
   return (
     <div className='h-screen relative overflow-hidden'>
       <img className='w-16 absolute left-5 top-5' src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
       <div className='h-screen w-screen'>
-        {/* image for temporary use  */}
-        {/* <LiveTracking /> */}
       </div>
       <div className=' flex flex-col justify-end h-screen absolute top-0 w-full'>
         <div className='h-[30%] p-6 bg-white relative'>

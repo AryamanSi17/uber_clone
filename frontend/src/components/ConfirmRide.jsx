@@ -1,8 +1,7 @@
 import React from 'react'
 
 const ConfirmRide = (props) => {
-    console.log('Fare Object:', props.fare);
-    console.log('Selected Vehicle Type:', props.vehicleType);
+
   return (
     <div>
     <h5 className='p-1 text-center w-[93%] absolute top-0' onClick={() => {
