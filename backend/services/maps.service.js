@@ -4,7 +4,7 @@ const captainModel = require('../models/captain.model');
 module.exports.getAddressCoordinate = async (address) => {
     const apiKey = process.env.GOOGLE_MAPS_API;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-   
+
     try {
         const response = await axios.get(url);
         if (response.data.status === 'OK') {
@@ -22,60 +22,72 @@ module.exports.getAddressCoordinate = async (address) => {
     }
 }
 
-module.exports.getDistanceTime=async (origin,destination)=>{
-    if(!origin||!destination){
+module.exports.getDistanceTime = async (origin, destination) => {
+    if (!origin || !destination) {
         throw new Error('Origin and destination are required');
     }
-    const apiKey=process.env.GOOGLE_MAPS_API;
-    const url=`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=${origin}&destinations=${destination}&key=${apiKey}`;
-    try{
-        const response=await axios.get(url);
-        if(response.data.status==='OK'){
 
-            if(response.data.rows[0].elements[0].status==='NOT_FOUND'){
-                throw new Error('Invalid origin or destination');
-            }
-            return response.data.rows[0].elements[0];
-        }else{
-            throw new Error('Unable to fetch distance and time');
+    const apiKey = process.env.GOOGLE_MAPS_API;
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
+
+    try {
+        const response = await axios.get(url);
+        console.log('Distance Matrix API Response:', response.data);
+
+        if (response.data.status !== 'OK') {
+            throw new Error(response.data.error_message || 'Unable to fetch distance and time');
         }
-    }catch(error){
-        console.error(error);
-        throw error;
-    }
-}
 
-module.exports.getAutoCompleteSuggestions=async (input)=>{
-    if(!input){
-        throw new Error('Input is required');
+        const element = response.data.rows[0].elements[0];
+        if (element.status === 'ZERO_RESULTS') {
+            console.warn('No routes found, defaulting to zero');
+            return { distance: { value: 0 }, duration: { value: 0 } };
+        }
+
+        return element;
+    } catch (err) {
+        console.error('Error fetching distance/time:', err.message);
+        throw err;
     }
-    const apiKey=process.env.GOOGLE_MAPS_API;
-    const url=`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${input}&key=${apiKey}`;
-    try{
-        const response=await axios.get(url);
-        if(response.data.status==='OK'){
-            if(response.data.predictions.length===0){
-                throw new Error('No suggestions found');
-            }
-            return response.data.predictions;
-        }else{
+};
+
+
+module.exports.getAutoCompleteSuggestions = async (input) => {
+    if (!input) {
+        throw new Error('query is required');
+    }
+
+    const apiKey = process.env.GOOGLE_MAPS_API;
+    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
+
+    try {
+        const response = await axios.get(url);
+
+        if (response.data.status === 'OK') {
+            return response.data.predictions.map(prediction => prediction.description).filter(value => value);
+        } else {
             throw new Error('Unable to fetch suggestions');
         }
-    }catch(error){
-        console.error(error);
-        throw error;
+    } catch (err) {
+        console.error(err);
+        throw err;
     }
 }
 
-
 module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+
+    // radius in km
+
+
     const captains = await captainModel.find({
         location: {
             $geoWithin: {
-                $centerSphere: [ [ ltd, lng ], radius / 6378.1 ]
+                $centerSphere: [ [ ltd, lng ], radius / 6371 ]
             }
         }
     });
 
     return captains;
+
+
 }

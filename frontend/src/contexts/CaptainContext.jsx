@@ -6,8 +6,8 @@ const CaptainContext = ({ children }) => {
     const [captain, setCaptain] = useState({
         email: '',
         fullname: {
-            firstName: '',
-            lastName: ''
+            firstname: '',
+            lastname: ''
         }
     });
     useEffect(() => {
