@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LoadScript, GoogleMap, Marker } from '@react-google-maps/api';
+import { LoadScript, GoogleMap, Marker, Circle } from '@react-google-maps/api';
 
 const containerStyle = {
     width: '100%',
@@ -9,6 +9,19 @@ const containerStyle = {
 const defaultCenter = {
     lat: 26.8467, // Example: Lucknow, India
     lng: 80.9462,
+};
+const circleOptions = {
+    strokeColor: '#007bff',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#007bff',
+    fillOpacity: 0.35,
+    clickable: false,
+    draggable: false,
+    editable: false,
+    visible: true,
+    radius: 100, // Radius in meters
+    zIndex: 1,
 };
 
 const LiveTracking = () => {
@@ -56,6 +69,13 @@ const LiveTracking = () => {
                     zoom={15}
                     onLoad={(map) => (mapRef.current = map)}
                 >
+                     <Circle
+                        center={currentPosition}
+                        options={{
+                            ...circleOptions,
+                            radius: 100, // Adjust the radius as per your requirement
+                        }}
+                    />
                     {/* Use a custom marker for the current position */}
                     <Marker
                         position={currentPosition}

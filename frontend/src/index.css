@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Restrict app to a mobile-friendly width */
+#root {
+    max-width: 480px; /* Emulate mobile screen width */
+    margin: 0 auto; /* Center content horizontally */
+    height: 100vh; /* Full viewport height */
+    background-color: #ffffff; /* White background for unused areas */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Apply styles for body */
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #121212; /* White background */
+    color: #000000; /* Black text for contrast */
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* App container */
+  .container {
+    flex: 1;
+    background-color: #121212; /* Dark background for the app content */
+    color: #ffffff; /* Light text inside the app */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow effect */
+    border-radius: 8px; /* Optional: rounded corners */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    padding: 16px;
+  }
+  
